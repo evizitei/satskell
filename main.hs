@@ -13,6 +13,19 @@ data Clause = Clause [Value] deriving (Show, Eq)
 -- because the whole thing works on CNF or a conjuction of internally disjoint clauses.
 data Problem = Problem [Clause] deriving (Show, Eq)
 
+-- for any assignment of values we should be able to determine
+-- whether it satisfies the problem or not.
+data Assignment = Assignment [Value] deriving (Show, Eq)
+
+satisfiesValue :: Assignment -> Value -> Bool
+satisfiesValue (Assignment candidateValues) (Value name v) = any (\(Value name' v') -> name == name' && v == v') candidateValues 
+
+satisfiesClause :: Assignment -> Clause ->  Bool
+satisfiesClause assignment (Clause values) = any (satisfiesValue assignment) values
+
+satisfies :: Assignment -> Problem -> Bool
+satisfies assignment (Problem clauses) = all (satisfiesClause assignment) clauses
+
 
 main :: IO ()
 main = do
@@ -20,5 +33,11 @@ main = do
             Clause [Value A True, Value B True, Value C False],
             Clause [Value A False, Value B True, Value C True],
             Clause [Value A True, Value B False, Value C True],
-            Clause [Value A True, Value B True, Value C True]]
+            Clause [Value A False, Value B False, Value C False]]
     putStrLn(show(problem))
+    let a1 = Assignment [Value A True, Value B True, Value C True]
+    let a2 = Assignment [Value A True, Value B True, Value C False]
+    let a1Solve = satisfies a1 problem
+    let a2Solve = satisfies a2 problem
+    putStrLn(show(a1Solve))
+    putStrLn(show(a2Solve))
