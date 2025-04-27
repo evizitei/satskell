@@ -26,6 +26,8 @@ satisfiesClause assignment (Clause values) = any (satisfiesValue assignment) val
 satisfies :: Assignment -> Problem -> Bool
 satisfies assignment (Problem clauses) = all (satisfiesClause assignment) clauses
 
+enumerateAssignments :: [Var] -> [Assignment]
+enumerateAssignments vars = map Assignment (sequence [[Value v True, Value v False] | v <- vars])
 
 main :: IO ()
 main = do
